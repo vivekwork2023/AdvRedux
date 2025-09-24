@@ -1,0 +1,10 @@
+We cannot run the side-effects and async tasks in the reducers.
+So we can run them in 
+1. components using useEffect()
+2. Inside the action creators
+
+
+
+Where should out logic go -> reducers / components / action
+1. synchronous, side-effects free code --- Prefer reducers
+2. async code or code with side-effects --- Prefer action creators or components

@@ -12,6 +12,8 @@ const ProductItem = (props) => {
 
   const addToCartHandler = () => {
     const newTotalQuantity = cart.totalQuantity + 1;
+    // cart.totalQuantity = cart.totalQuantity + 1;  this is a bad practice becuase cart should be updated in the reducer, if we do it here this value will be updated and redux is not aware of this change in value
+    // we are changing the value in memory, which is really bad
 
     const updatedItems = cart.items.slice(); // create copy via slice to avoid mutating original state
     const existingItem = updatedItems.find((item) => item.id === id);
