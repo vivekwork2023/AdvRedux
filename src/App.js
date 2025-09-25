@@ -1,31 +1,80 @@
-import { useSelector } from 'react-redux';
+import { Fragment, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Cart from './components/Cart/Cart';
 import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
+import { uiActions } from './store/ui-slice';
+import Notification from './components/UI/Notification';
 
-import { use, useEffect } from 'react';
+let isInitial = true;
 
 function App() {
+  const dispatch = useDispatch();
   const showCart = useSelector((state) => state.ui.cartIsVisible);
-  const cart = useSelector ( (state) => state.cart );
+  const cart = useSelector((state) => state.cart);
+  const notification = useSelector((state) => state.ui.notification);
 
-  // this effect funciton will be called whenever any changes were made in the cart. However the cart is using selector, so a subsciption to store is setup. which will update this cart whenever it changes
-  useEffect( () => {
-    fetch ( 'https://test-mode-20260-default-rtdb.firebaseio.com/cart.json', 
-      {method : 'PUT', 
-       body : JSON.stringify(cart)
-      })
-  }, [cart] );
+  useEffect(() => {
+    const sendCartData = async () => {
+      dispatch(
+        uiActions.showNotification({
+          status: 'pending',
+          title: 'Sending...',
+          message: 'Sending cart data!',
+        })
+      );
+      const response = await fetch(
+        'https://test-mode-20260-default-rtdb.firebaseio.com/cart.json',
+        {
+          method: 'PUT',
+          body: JSON.stringify(cart),
+        }
+      );
 
-  // This fetch will ensure that the data is stored there, we are using PUT so it will always update the existing data in it
-  // All the data manupulations should be done in the backend, but due to the course restrictions, we need to move it to frontend and only store the data
+      if (!response.ok) {
+        throw new Error('Sending cart data failed.');
+      }
+
+      dispatch(
+        uiActions.showNotification({
+          status: 'success',
+          title: 'Success!',
+          message: 'Sent cart data successfully!',
+        })
+      );
+    };
+
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+
+    sendCartData().catch((error) => {
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Sending cart data failed!',
+        })
+      );
+    });
+  }, [cart, dispatch]);
 
   return (
-    <Layout>
-      {showCart && <Cart />}
-      <Products />
-    </Layout>
+    <Fragment>
+      {notification && (
+        <Notification
+          status={notification.status}
+          title={notification.title}
+          message={notification.message}
+        />
+      )}
+      <Layout>
+        {showCart && <Cart />}
+        <Products />
+      </Layout>
+    </Fragment>
   );
 }
 
