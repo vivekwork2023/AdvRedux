@@ -6,6 +6,7 @@ import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
 import { uiActions } from './store/ui-slice';
 import Notification from './components/UI/Notification';
+import { sendCartData } from './store/cart-slice';
 
 let isInitial = true;
 
@@ -15,51 +16,41 @@ function App() {
   const cart = useSelector((state) => state.cart);
   const notification = useSelector((state) => state.ui.notification);
 
-  useEffect(() => {
-    const sendCartData = async () => {
-      dispatch(
-        uiActions.showNotification({
-          status: 'pending',
-          title: 'Sending...',
-          message: 'Sending cart data!',
-        })
-      );
-      const response = await fetch(
-        'https://test-mode-20260-default-rtdb.firebaseio.com/cart.json',
-        {
-          method: 'PUT',
-          body: JSON.stringify(cart),
-        }
-      );
 
-      if (!response.ok) {
-        throw new Error('Sending cart data failed.');
-      }
 
-      dispatch(
-        uiActions.showNotification({
-          status: 'success',
-          title: 'Success!',
-          message: 'Sent cart data successfully!',
-        })
-      );
-    };
+  useEffect( () => {
+    
+    // const sendCartData = async () => {
+
+    //   /**
+    //    * If we hover over the dispatch, then this is the format
+    //    * const dispatch: Dispatch
+    //       <{
+    //           payload: any;
+    //           type: "ui/showNotification";
+    //       }>
+    //    */
+    //   dispatch(
+    //     uiActions.showNotification({  // we wanted to create action creators, but react has already created these action creators here. Here we have writen the code in the component
+    //       status: 'pending',
+    //       title: 'Sending...',
+    //       message: 'Sending cart data!',
+    //     })
+    //   );
+
+
+    
+
+    dispatch(sendCartData(cart)); // we are dispatching the function that we created in the cart-slice.js file. This is a thunk function. This function will be called by the redux-thunk middleware. The redux-thunk middleware will call this function with the dispatch function as an argument. This way, we can dispatch actions from within this function.
 
     if (isInitial) {
       isInitial = false;
       return;
     }
 
-    sendCartData().catch((error) => {
-      dispatch(
-        uiActions.showNotification({
-          status: 'error',
-          title: 'Error!',
-          message: 'Sending cart data failed!',
-        })
-      );
-    });
   }, [cart, dispatch]);
+
+
 
   return (
     <Fragment>

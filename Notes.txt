@@ -8,3 +8,13 @@ So we can run them in
 Where should out logic go -> reducers / components / action
 1. synchronous, side-effects free code --- Prefer reducers
 2. async code or code with side-effects --- Prefer action creators or components
+
+
+
+Until now we have created the async code in the App component. Now lets create it in the action creator.
+
+We will be introduced to a new terminology called THUNK.
+THUNK - A function that delays an action Until later.
+
+If redux sees that a dispatch is actually return an actions which is actually a function, then Redux will execture that function
+and its actions will be dispatched
