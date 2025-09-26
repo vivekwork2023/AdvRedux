@@ -63,15 +63,20 @@ export const getCartData = () => {
             }
             const data = await response.json();
 
+            return data;
+
             // In general to dispatch an action, we need a dispatch = useDispatch() hook in the component, but here we are in a function, so we can use the dispatch function that is passed as an argument to this function by the redux-thunk middleware
-            cartActions.replaceCart({
-                items: data.items || [],
-                totalQuantity: data.totalQuantity,
-            });
         }
 
         try {
-            await getDataFromFirebase();
+            const dataFromServer = await getDataFromFirebase();
+
+            dispatch(cartActions.replaceCart({
+                items: dataFromServer.items || [],
+                totalQuantity: dataFromServer.totalQuantity,
+            }));
+            // Always update once we get the data from the server, not the response
+
         } catch (error) {
             dispatch(
                 uiActions.showNotification({
