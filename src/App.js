@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import Cart from './components/Cart/Cart';
 import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
-import { uiActions } from './store/ui-slice';
 import Notification from './components/UI/Notification';
 import { sendCartData } from './store/cart-slice';
 
@@ -37,20 +36,15 @@ function App() {
     //       message: 'Sending cart data!',
     //     })
     //   );
-
-
     
-
-    dispatch(sendCartData(cart)); // we are dispatching the function that we created in the cart-slice.js file. This is a thunk function. This function will be called by the redux-thunk middleware. The redux-thunk middleware will call this function with the dispatch function as an argument. This way, we can dispatch actions from within this function.
-
     if (isInitial) {
       isInitial = false;
       return;
     }
 
+    dispatch(sendCartData(cart)); // we are dispatching the function that we created in the cart-slice.js file. This is a thunk function. This function will be called by the redux-thunk middleware. The redux-thunk middleware will call this function with the dispatch function as an argument. This way, we can dispatch actions from within this function.
+    
   }, [cart, dispatch]);
-
-
 
   return (
     <Fragment>
